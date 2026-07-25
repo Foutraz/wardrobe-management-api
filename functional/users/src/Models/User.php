@@ -3,6 +3,7 @@
 namespace Functional\Users\Models;
 
 use Functional\Users\Database\Factories\UserFactory;
+use Functional\Users\Enums\Locale;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -41,6 +42,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'locale' => Locale::class,
         ];
     }
 }
