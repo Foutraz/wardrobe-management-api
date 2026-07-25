@@ -5,6 +5,11 @@ includes:
 parameters:
     level: 7
 
+    configDirectories:
+        - config
+        - functional/*/config
+        - technical/*/config
+
     paths:
         - functional
         - technical
