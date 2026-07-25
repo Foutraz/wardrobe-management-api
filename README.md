@@ -8,10 +8,14 @@ La référence concurrente est *Alta Daily: Digital AI Closet*, à laquelle ce p
 deux fonctions absentes : le **suivi de disponibilité** des vêtements et la **mise en vente
 assistée sur Vinted**.
 
-> **État du projet** : tranches 1 et 2 livrées — socle, catalogue, garde-robe, disponibilité,
-> journal de port, cascades, photos et détourage — avec 39 tests verts et Larastan niveau 7
-> à zéro erreur. Les tranches 3 à 7 restent à construire, voir le
-> [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
+> **État du projet** : tranches 1 et 2 livrées, tranche 3 livrée côté domaine. 60 tests verts,
+> Larastan niveau 7 à zéro erreur.
+>
+> Ce qui manque à la tranche 3 : la **surface HTTP** des tenues — Resources lomkit, Controls
+> d'accès et endpoint de prévisualisation. Le domaine (schéma, cycle de vie des rendus, cache,
+> composition de la planche) est en place et testé, mais rien n'est encore exposé sur l'API.
+>
+> Voir le [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
 
 ## Fonctionnalités
 

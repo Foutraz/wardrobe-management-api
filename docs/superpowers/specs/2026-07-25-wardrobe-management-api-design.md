@@ -441,3 +441,8 @@ raison. À lire avant de s'étonner d'une différence entre ce document et le co
 | Le service valide le format produit avant de journaliser | Un pilote qui annonce un succès sans écrire de PNG serait enregistré comme réussi et provoquerait une erreur 500 en aval. Le journal doit dire ce qui s'est réellement passé. |
 | `ai_operations.subject` est polymorphe et sans clé étrangère | C'est une piste d'audit : elle doit survivre à la suppression de ce qu'elle décrit. |
 | Les répertoires de config des layers sont déclarés à Larastan | Une config de layer est un fichier de config ; sans cette déclaration la règle sur `env()` la prend pour du code applicatif. |
+| **Pas de contrainte `CHECK` sur `outfit_items`** | Le Blueprint de Laravel n'expose pas `check()`, et SQLite ne peut pas l'ajouter par `ALTER`. L'invariant « exactement une référence » est tenu par le listener `GuardOutfitItemReference`, testé. **À doubler d'une contrainte en base dès le passage à PostgreSQL.** |
+| Un rendu en échec peut repasser à `Pending` | Sans cette transition, un échec serait définitif : la clé de cache étant unique, aucune nouvelle tentative ne serait possible. `Succeeded` reste terminal. |
+| Une suppression douce de tenue **conserve** sa composition | Même raisonnement que pour le journal de port : restaurer une tenue doit la restaurer entière. |
+| La planche est composée en GD, pas par un fournisseur d'IA | C'est du montage d'images, pas de la génération. Aucun coût, aucune latence, aucune dépendance externe. |
+| `ImageMontage` vit dans `technical/media` | Composer une grille d'images est générique ; c'est `styling` qui décide quelles images et dans quel ordre. |
