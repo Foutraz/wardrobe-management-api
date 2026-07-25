@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/xefi/phpstan-xefi-rules/extension.neon
+
+parameters:
+    level: 7
+
+    paths:
+        - functional
+        - technical
+        - routes
+
+    excludePaths:
+        - functional/*/database/migrations/*
+        - technical/*/database/migrations/*
