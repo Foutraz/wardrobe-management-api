@@ -7,6 +7,12 @@
     <testsuite name="Feature">
       <directory>tests/Feature</directory>
     </testsuite>
+    <testsuite name="functional/wardrobe">
+      <directory>functional/wardrobe/tests</directory>
+    </testsuite>
+    <testsuite name="functional/catalog">
+      <directory>functional/catalog/tests</directory>
+    </testsuite>
   </testsuites>
   <source>
     <include>
