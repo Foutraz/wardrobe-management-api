@@ -36,6 +36,3 @@ auth.json
 
 /database/*.sqlite
 /database/*.sqlite-journal
-
-# Generated IDE helper stubs
-/faker_mixin.php

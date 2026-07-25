@@ -10,6 +10,9 @@ parameters:
         - technical
         - routes
 
+    scanFiles:
+        - faker_mixin.php
+
     excludePaths:
         - functional/*/database/migrations/*
         - technical/*/database/migrations/*
