@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<Garment>
+ */
 class GarmentFactory extends Factory
 {
     protected $model = Garment::class;

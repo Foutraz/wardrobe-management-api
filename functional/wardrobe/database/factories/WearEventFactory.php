@@ -6,6 +6,9 @@ use Functional\Wardrobe\Models\Garment;
 use Functional\Wardrobe\Models\WearEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<WearEvent>
+ */
 class WearEventFactory extends Factory
 {
     protected $model = WearEvent::class;

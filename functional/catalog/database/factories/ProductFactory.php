@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<Product>
+ */
 class ProductFactory extends Factory
 {
     protected $model = Product::class;

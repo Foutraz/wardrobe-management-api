@@ -11,25 +11,48 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property string $id
+ * @property string|null $parent_id
+ * @property string $slug
+ * @property int $sort
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read string $label
+ */
 #[Fillable(['parent_id', 'slug', 'sort'])]
 #[UseFactory(CategoryFactory::class)]
 class Category extends Model
 {
-    use HasFactory, HasUlids;
+    /** @use HasFactory<CategoryFactory> */
+    use HasFactory;
 
+    use HasUlids;
+
+    /** @var list<string> */
     protected $appends = ['label'];
 
+    /**
+     * @return BelongsTo<self, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<self, $this>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<Product, $this>
+     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
@@ -37,6 +60,8 @@ class Category extends Model
 
     /**
      * Resolve the human readable name from the translation files keyed by slug.
+     *
+     * @return Attribute<string, never>
      */
     protected function label(): Attribute
     {

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<ProductVariant>
+ */
 class ProductVariantFactory extends Factory
 {
     protected $model = ProductVariant::class;

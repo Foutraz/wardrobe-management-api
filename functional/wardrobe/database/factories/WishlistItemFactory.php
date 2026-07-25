@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+/**
+ * @extends Factory<WishlistItem>
+ */
 class WishlistItemFactory extends Factory
 {
     protected $model = WishlistItem::class;
