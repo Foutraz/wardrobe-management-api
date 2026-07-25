@@ -80,13 +80,14 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 ## Foundational Context
 
-This application is a Laravel application, and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages and versions.
+This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4
-- laravel/framework (LARAVEL) - v13
-- laravel/prompts (PROMPTS) - v0
+- php - 8.5
 - laravel/boost (BOOST) - v2
+- laravel/framework (LARAVEL) - v13
 - laravel/mcp (MCP) - v0
+- laravel/prompts (PROMPTS) - v0
+- larastan/larastan (LARASTAN) - v3
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1
 - phpunit/phpunit (PHPUNIT) - v12
@@ -107,7 +108,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Application Structure & Architecture
 
-- Stick to the existing directory structure; don't create new base folders without approval.
+- Stick to existing directory structure; don't create new base folders without approval.
 - Do not change the application's dependencies without approval.
 
 ## Frontend Bundling
@@ -120,7 +121,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Replies
 
-- Be concise in your explanations – focus on what's important rather than explaining obvious details.
+- Be concise in your explanations - focus on what's important rather than explaining obvious details.
 
 === boost rules ===
 
@@ -156,9 +157,9 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## Tinker
 
-- Execute PHP in-app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
+- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
-    - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
+  - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
 === php rules ===
 
@@ -181,7 +182,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Do Things the Laravel Way
 
-- Use `php artisan make:` commands to create new files (i.e., migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
 - If you're creating a generic PHP class, use `php artisan make:class`.
 - Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
 
@@ -191,7 +192,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 ## APIs & Eloquent Resources
 
-- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not; then you should follow existing application convention.
+- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
 
 ## URL Generation
 
