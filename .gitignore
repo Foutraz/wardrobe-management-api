@@ -33,3 +33,9 @@ auth.json
 /.idea/
 /.vscode/
 /.fleet/
+
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# Generated IDE helper stubs
+/faker_mixin.php
