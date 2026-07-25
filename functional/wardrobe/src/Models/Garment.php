@@ -9,6 +9,7 @@ use Functional\Users\Models\User;
 use Functional\Wardrobe\Database\Factories\GarmentFactory;
 use Functional\Wardrobe\Enums\GarmentAvailability;
 use Functional\Wardrobe\Enums\GarmentCondition;
+use Functional\Wardrobe\Enums\GarmentMediaCollection;
 use Functional\Wardrobe\Policies\GarmentPolicy;
 use Functional\Wardrobe\Values\CostPerWear;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -24,6 +25,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Lomkit\Access\Controls\HasControl;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string $id
@@ -65,9 +68,9 @@ use Lomkit\Access\Controls\HasControl;
 ])]
 #[UseFactory(GarmentFactory::class)]
 #[UsePolicy(GarmentPolicy::class)]
-class Garment extends Model
+class Garment extends Model implements HasMedia
 {
-    use HasControl, HasUlids, Prunable, SoftDeletes;
+    use HasControl, HasUlids, InteractsWithMedia, Prunable, SoftDeletes;
 
     /** @use HasFactory<GarmentFactory> */
     use HasFactory;
@@ -110,6 +113,17 @@ class Garment extends Model
     public function wearEvents(): HasMany
     {
         return $this->hasMany(WearEvent::class);
+    }
+
+    /**
+     * Keep the photos taken by the owner apart from the background-free copies derived from them.
+     */
+    public function registerMediaCollections(): void
+    {
+        foreach (GarmentMediaCollection::cases() as $mediaCollection) {
+            $this->addMediaCollection($mediaCollection->value)
+                ->acceptsMimeTypes($mediaCollection->acceptedMimeTypes());
+        }
     }
 
     /**

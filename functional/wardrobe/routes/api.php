@@ -2,6 +2,7 @@
 
 use Functional\Wardrobe\Http\Controllers\MarkGarmentWornController;
 use Functional\Wardrobe\Http\Controllers\UpdateGarmentAvailabilityController;
+use Functional\Wardrobe\Http\Controllers\UploadGarmentPhotoController;
 use Functional\Wardrobe\Rest\Controllers\GarmentController;
 use Functional\Wardrobe\Rest\Controllers\WishlistItemController;
 use Illuminate\Support\Facades\Route;
@@ -16,4 +17,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function (): 
 
     Route::put('garments/{garment}/availability', UpdateGarmentAvailabilityController::class)
         ->name('garments.availability.update');
+
+    Route::post('garments/{garment}/photos', UploadGarmentPhotoController::class)
+        ->name('garments.photos.store');
 });
