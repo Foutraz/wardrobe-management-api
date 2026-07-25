@@ -3,10 +3,15 @@
 namespace Functional\Wardrobe\Providers;
 
 use Functional\Users\Models\User;
+use Functional\Wardrobe\Access\Controls\GarmentControl;
+use Functional\Wardrobe\Access\Controls\WishlistItemControl;
 use Functional\Wardrobe\Database\Seeders\WardrobeSeeder;
+use Functional\Wardrobe\Listeners\AssignAuthenticatedOwner;
 use Functional\Wardrobe\Listeners\CascadeGarmentDeletion;
 use Functional\Wardrobe\Listeners\CascadeUserDeletion;
 use Functional\Wardrobe\Models\Garment;
+use Functional\Wardrobe\Models\WishlistItem;
+use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
 class WardrobeServiceProvider extends LayerServiceProvider
@@ -14,6 +19,9 @@ class WardrobeServiceProvider extends LayerServiceProvider
     public function boot(): void
     {
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'wardrobe');
+
+        Garment::creating(AssignAuthenticatedOwner::class);
+        WishlistItem::creating(AssignAuthenticatedOwner::class);
 
         User::deleting(CascadeUserDeletion::class);
         Garment::deleting(CascadeGarmentDeletion::class);
@@ -33,6 +41,9 @@ class WardrobeServiceProvider extends LayerServiceProvider
 
     public function register(): void
     {
-        //
+        (new Access)->addControls([
+            new GarmentControl,
+            new WishlistItemControl,
+        ]);
     }
 }

@@ -1,7 +1,19 @@
 <?php
 
+use Functional\Wardrobe\Http\Controllers\MarkGarmentWornController;
+use Functional\Wardrobe\Http\Controllers\UpdateGarmentAvailabilityController;
+use Functional\Wardrobe\Rest\Controllers\GarmentController;
+use Functional\Wardrobe\Rest\Controllers\WishlistItemController;
 use Illuminate\Support\Facades\Route;
+use Lomkit\Rest\Facades\Rest;
 
-// Routes here are wrapped in the 'api' middleware group with the 'api'
-// prefix by the layer service provider. To version your endpoints
-// (/api/v1/...), nest Route::prefix('v1')->group(...) inside.
+Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function (): void {
+    Rest::resource('garments', GarmentController::class);
+    Rest::resource('wishlist-items', WishlistItemController::class);
+
+    Route::post('garments/{garment}/wears', MarkGarmentWornController::class)
+        ->name('garments.wears.store');
+
+    Route::put('garments/{garment}/availability', UpdateGarmentAvailabilityController::class)
+        ->name('garments.availability.update');
+});

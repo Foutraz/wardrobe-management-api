@@ -9,9 +9,11 @@ use Functional\Users\Models\User;
 use Functional\Wardrobe\Database\Factories\GarmentFactory;
 use Functional\Wardrobe\Enums\GarmentAvailability;
 use Functional\Wardrobe\Enums\GarmentCondition;
+use Functional\Wardrobe\Policies\GarmentPolicy;
 use Functional\Wardrobe\Values\CostPerWear;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Lomkit\Access\Controls\HasControl;
 
 #[Fillable([
     'product_variant_id',
@@ -38,9 +41,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'notes',
 ])]
 #[UseFactory(GarmentFactory::class)]
+#[UsePolicy(GarmentPolicy::class)]
 class Garment extends Model
 {
-    use HasFactory, HasUlids, Prunable, SoftDeletes;
+    use HasControl, HasFactory, HasUlids, Prunable, SoftDeletes;
 
     public function user(): BelongsTo
     {
