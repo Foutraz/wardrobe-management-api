@@ -100,6 +100,7 @@ l'ensemble, par étapes réexécutables :
 
 ```bash
 scripts/bootstrap.sh system     # PHP, Composer, Node, PostgreSQL, Redis — demande sudo
+scripts/bootstrap.sh database   # rôle et base PostgreSQL — demande sudo
 scripts/bootstrap.sh laravel    # squelette Laravel 13
 scripts/bootstrap.sh packages   # jeu de packages Xefi obligatoire
 scripts/bootstrap.sh osdd       # scaffolding des layers
@@ -111,7 +112,20 @@ Ou d'un bloc :
 scripts/bootstrap.sh all
 ```
 
-L'étape `system` requiert un mot de passe sudo et doit donc être lancée manuellement.
+Les étapes `system` et `database` requièrent un mot de passe sudo et doivent donc être
+lancées manuellement. Une fois `database` passée, basculer `DB_CONNECTION` sur `pgsql`
+dans `.env` en suivant `.env.example`.
+
+### À savoir sur `osdd:start`
+
+La commande dissout le squelette monolithique dans les layers : `app/Models/User.php`, sa
+factory et sa migration partent dans `functional/users`, et `config/` disparaît au profit
+de la publication à la demande. L'absence de `app/`, `config/` et `database/` à la racine
+est donc le comportement attendu, pas une installation ratée.
+
+Corollaire : les migrations `sessions`, `jobs` et `cache` du squelette disparaissent aussi.
+Le projet utilise Redis pour ces trois rôles, ce qui rend ces tables inutiles — mais laisser
+`SESSION_DRIVER=database` provoquerait une panne silencieuse.
 
 ### Contrainte matérielle à connaître
 
