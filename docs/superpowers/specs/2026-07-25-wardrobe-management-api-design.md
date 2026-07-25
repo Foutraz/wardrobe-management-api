@@ -409,5 +409,29 @@ POST /api/v1/garments/{garment}/vinted-draft
 
 ## 12. Prérequis d'environnement
 
-La machine de développement n'a **ni PHP, ni Composer, ni Node, ni PostgreSQL, ni Redis**.
-Le script `scripts/bootstrap.sh` exécute l'installation puis le scaffolding complet.
+Le script `scripts/bootstrap.sh` exécute l'installation puis le scaffolding complet, par
+étapes réexécutables. Les étapes `system` et `database` demandent `sudo` et doivent être
+lancées par un humain.
+
+## 13. Journal des écarts
+
+Décisions prises pendant la construction qui divergent de la conception initiale, avec leur
+raison. À lire avant de s'étonner d'une différence entre ce document et le code.
+
+| Écart | Raison |
+|-------|--------|
+| La layer `identity` s'appelle `users` | C'est le nom que produit `osdd:start`. Suivre la convention de l'outil plutôt que la nôtre. |
+| Une neuvième layer, `technical/osdd` | Créée par `osdd:start`, elle porte la configuration du package. |
+| `GarmentCondition` a cinq cas calés sur Vinted — `NewWithTag`, `NewWithoutTag`, `VeryGood`, `Good`, `Satisfactory` | Correspondance 1:1 avec les conditions Vinted, donc aucune table de correspondance inventée à maintenir dans `resale`. |
+| Les modèles `PersonalAccessToken`, `Role` et `Permission` sont surchargés dans `users` | Les modèles de Sanctum et de spatie utilisent des clés auto-incrémentées ; la règle ULID impose de les surcharger avec `HasUlids`. |
+| Les migrations de Sanctum et de spatie vivent dans `functional/users` | Les tokens et les rôles appartiennent au cycle de vie du compte. Une layer `technical/auth` serait plus orthodoxe et reste ouverte. |
+| Une locale par utilisateur, appliquée par un middleware | La colonne `users.locale` ne servait à rien sans lui : les réponses suivaient le défaut applicatif. Le middleware `locale` la fait respecter. |
+| `wear_events.outfit_id` est absent | La table `outfits` n'existe qu'en tranche 3. La colonne et sa clé étrangère y seront ajoutées. |
+| Les cascades vivent dans `wardrobe`, pas dans `users` | `wardrobe` écoute `User::deleting`. L'inverse ferait connaître `wardrobe` à `users`, une dépendance à contresens. |
+| Une suppression douce de vêtement **conserve** son journal de port | Restaurer un vêtement doit restaurer son coût par port. Seule la suppression définitive efface l'historique. |
+| Le listener de cascade reflète le type de suppression du parent | Sans cela la contrainte `restrict` bloque la purge d'un compte dont les vêtements sont déjà en corbeille. |
+| Pas de classes de base lomkit au niveau projet | Le concern `PerformsQueries` du package fournit déjà les cinq hooks. En créer dans chaque layer serait la duplication que l'OSDD proscrit. |
+| Les libellés de catégories viennent des fichiers de langue, indexés par `slug` | Pas de colonne `name`, pas de table de traductions : la taxonomie est un référentiel curé, pas une donnée utilisateur. |
+| Les énumérations `Ability` et `UserRole` vivent dans `users` | Simplification assumée : le vocabulaire de permissions est traité comme applicatif. Le découpage orthodoxe donnerait à chaque layer ses propres abilities. |
+| `faker_mixin.php` est versionné | Régénéré à chaque appel `faker()`, mais PHPStan sur un checkout neuf ne l'aurait pas. |
+| La base de développement est SQLite, pas PostgreSQL | La création du rôle PostgreSQL exige `sudo`. Sans incidence sur les tranches 0 à 3 ; à corriger avant la tranche 3, où la contrainte `CHECK` et les colonnes JSON divergent selon le moteur. |

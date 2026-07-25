@@ -8,8 +8,9 @@ La référence concurrente est *Alta Daily: Digital AI Closet*, à laquelle ce p
 deux fonctions absentes : le **suivi de disponibilité** des vêtements et la **mise en vente
 assistée sur Vinted**.
 
-> **État du projet** : amorçage. La conception est arrêtée et documentée ; le squelette
-> Laravel n'est pas encore installé. Voir [Démarrage](#démarrage).
+> **État du projet** : tranche 1 livrée — socle, catalogue, garde-robe, disponibilité,
+> journal de port et cascades, avec 32 tests verts. Les tranches 2 à 7 restent à construire,
+> voir le [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
 
 ## Fonctionnalités
 
@@ -32,16 +33,20 @@ chacune versionnée, testable isolément et déclarant ses dépendances.
 
 ```
 technical/
+  osdd/           la layer technique du package OSDD lui-même
   media/          stockage, variantes d'images, détourage
   ai-gateway/     abstraction des fournisseurs d'IA, journal des opérations, coûts
 functional/
-  identity/       utilisateurs, authentification, permissions
+  users/          utilisateurs, authentification, permissions, locale
   catalog/        produits, variantes, marques, catégories — mutualisé, sans user_id
   wardrobe/       vêtements possédés, disponibilité, journal de port, souhaits
   identification/ résolution d'un scan ou d'une photo
   styling/        avatars, tenues, prévisualisations
   resale/         brouillons d'annonce Vinted
 ```
+
+La layer d'authentification s'appelle `users` et non `identity` : c'est le nom que produit
+`osdd:start`, et suivre la convention de l'outil vaut mieux qu'imposer la nôtre.
 
 La frontière décisive est **`catalog` / `wardrobe`** : le catalogue est une donnée de
 référence mutualisée entre tous les utilisateurs, alimentée par les identifications et
