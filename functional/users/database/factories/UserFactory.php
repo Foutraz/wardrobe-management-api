@@ -14,11 +14,20 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'              => fake()->name(),
-            'email'             => fake()->unique()->safeEmail(),
+            'name' => faker()->name(),
+            'email' => Str::lower(faker()->ulid()).'@example.test',
             'email_verified_at' => now(),
-            'password'          => Hash::make('password'),
-            'remember_token'    => Str::random(10),
+            'password' => Hash::make('password'),
+            'locale' => 'fr',
+            'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Leave the account with an unconfirmed email address.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes): array => ['email_verified_at' => null]);
     }
 }
