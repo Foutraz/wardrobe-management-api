@@ -435,3 +435,9 @@ raison. À lire avant de s'étonner d'une différence entre ce document et le co
 | Les énumérations `Ability` et `UserRole` vivent dans `users` | Simplification assumée : le vocabulaire de permissions est traité comme applicatif. Le découpage orthodoxe donnerait à chaque layer ses propres abilities. |
 | `faker_mixin.php` est versionné | Régénéré à chaque appel `faker()`, mais PHPStan sur un checkout neuf ne l'aurait pas. |
 | La base de développement est SQLite, pas PostgreSQL | La création du rôle PostgreSQL exige `sudo`. Sans incidence sur les tranches 0 à 3 ; à corriger avant la tranche 3, où la contrainte `CHECK` et les colonnes JSON divergent selon le moteur. |
+| Le détourage est un pilote sélectionnable, pas BiRefNet en dur | Aucune pile Python n'est installée. Le pilote `rembg` s'active par `AI_CUTOUT_DRIVER` ; sans pilote, le statut vaut `unavailable` et aucun faux détourage n'est produit. |
+| Le détourage vit dans `ai-gateway`, pas dans `media` | C'est un appel à un modèle d'IA. `media` ne fait que stocker, et consomme `ai-gateway` via `CutoutPipeline`. |
+| Les pilotes renvoient un résultat, ils ne lèvent pas | La règle « pas de try-catch » impose de traiter l'échec d'un fournisseur externe comme une valeur de retour, pas comme une exception. D'où `OperationOutcome`. |
+| Le service valide le format produit avant de journaliser | Un pilote qui annonce un succès sans écrire de PNG serait enregistré comme réussi et provoquerait une erreur 500 en aval. Le journal doit dire ce qui s'est réellement passé. |
+| `ai_operations.subject` est polymorphe et sans clé étrangère | C'est une piste d'audit : elle doit survivre à la suppression de ce qu'elle décrit. |
+| Les répertoires de config des layers sont déclarés à Larastan | Une config de layer est un fichier de config ; sans cette déclaration la règle sur `env()` la prend pour du code applicatif. |

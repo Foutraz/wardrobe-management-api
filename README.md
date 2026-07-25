@@ -8,9 +8,10 @@ La référence concurrente est *Alta Daily: Digital AI Closet*, à laquelle ce p
 deux fonctions absentes : le **suivi de disponibilité** des vêtements et la **mise en vente
 assistée sur Vinted**.
 
-> **État du projet** : tranche 1 livrée — socle, catalogue, garde-robe, disponibilité,
-> journal de port et cascades, avec 32 tests verts. Les tranches 2 à 7 restent à construire,
-> voir le [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
+> **État du projet** : tranches 1 et 2 livrées — socle, catalogue, garde-robe, disponibilité,
+> journal de port, cascades, photos et détourage — avec 39 tests verts et Larastan niveau 7
+> à zéro erreur. Les tranches 3 à 7 restent à construire, voir le
+> [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
 
 ## Fonctionnalités
 
@@ -80,7 +81,7 @@ distinctes.
 
 | Besoin | Solution retenue | Note |
 |--------|------------------|------|
-| Détourage des photos | BiRefNet, licence MIT | Local, usage commercial autorisé |
+| Détourage des photos | Pilote sélectionnable, `rembg` par défaut | Aucun pilote installé : le statut le dit, rien n'est maquillé |
 | OCR d'étiquette | Tesseract en local | Gratuit |
 | Attributs par vision | API multimodale | Coût négligeable à l'échelle personnelle |
 | Essayage virtuel | Modèles libres en licence **non commerciale** | Légal en usage personnel uniquement |
