@@ -2,8 +2,12 @@
 
 namespace Functional\Wardrobe\Rest\Resources;
 
+use Functional\Users\Models\User;
+use Functional\Wardrobe\Access\Controls\WishlistItemControl;
 use Functional\Wardrobe\Models\WishlistItem;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Lomkit\Rest\Http\Requests\RestRequest;
 use Lomkit\Rest\Http\Resource;
 
@@ -47,9 +51,17 @@ class WishlistItemResource extends Resource
 
     /**
      * Restrict every read to the wishlist of the authenticated account.
+     *
+     * @throws AuthenticationException
      */
     public function searchQuery(RestRequest $request, Builder $query)
     {
-        return $query->controlled();
+        $user = $request->user();
+
+        if (! $user instanceof User || ! $query instanceof EloquentBuilder) {
+            throw new AuthenticationException;
+        }
+
+        return WishlistItemControl::new()->queried($query, $user);
     }
 }
