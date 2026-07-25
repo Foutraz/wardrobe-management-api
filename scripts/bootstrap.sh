@@ -16,10 +16,11 @@ Usage: scripts/bootstrap.sh <stage>
 
 Stages, to run in order:
   system     Install PHP, Composer, Node, PostgreSQL, Redis (requires sudo)
+  database   Create the PostgreSQL role and database (requires sudo)
   laravel    Create the Laravel 13 skeleton in this worktree
   packages   Install the mandatory Xefi package set
   osdd       Run the OSDD scaffolding and list the layer commands
-  all        system, laravel, packages, osdd in sequence
+  all        system, database, laravel, packages, osdd in sequence
 
 Each stage is safe to re-run: it checks its own preconditions first.
 USAGE
@@ -76,6 +77,31 @@ stage_system() {
     php -v | head -1
     composer --version
     node -v
+}
+
+stage_database() {
+    have psql || die "PostgreSQL client not found. Run: scripts/bootstrap.sh system"
+
+    local db_user="${DB_USERNAME:-wardrobe}"
+    local db_pass="${DB_PASSWORD:-wardrobe}"
+    local db_name="${DB_DATABASE:-wardrobe}"
+
+    say "Creating the PostgreSQL role and database (sudo password required)"
+
+    if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '${db_user}'" | grep -q 1; then
+        say "Role ${db_user} already exists, skipping"
+    else
+        sudo -u postgres psql -c "CREATE ROLE ${db_user} LOGIN PASSWORD '${db_pass}' CREATEDB"
+    fi
+
+    if sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname = '${db_name}'" | grep -q 1; then
+        say "Database ${db_name} already exists, skipping"
+    else
+        sudo -u postgres createdb -O "${db_user}" "${db_name}"
+    fi
+
+    say "Database stage complete"
+    PGPASSWORD="${db_pass}" psql -h 127.0.0.1 -U "${db_user}" -d "${db_name}" -c 'SELECT version();'
 }
 
 stage_laravel() {
@@ -164,10 +190,11 @@ NEXT
 main() {
     case "${1:-}" in
         system)   stage_system ;;
+        database) stage_database ;;
         laravel)  stage_laravel ;;
         packages) stage_packages ;;
         osdd)     stage_osdd ;;
-        all)      stage_system; stage_laravel; stage_packages; stage_osdd ;;
+        all)      stage_system; stage_database; stage_laravel; stage_packages; stage_osdd ;;
         *)        usage; exit 1 ;;
     esac
 }
