@@ -25,6 +25,6 @@ class CascadeUserDeletion
         WishlistItem::query()
             ->where('user_id', $user->id)
             ->cursor()
-            ->each(fn (WishlistItem $item) => $item->delete());
+            ->each(fn (WishlistItem $wishlistItem) => $wishlistItem->delete());
     }
 }

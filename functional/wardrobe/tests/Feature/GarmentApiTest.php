@@ -38,9 +38,13 @@ class GarmentApiTest extends TestCase
         $response = $this->postJson('/api/v1/garments/search', ['search' => []])
             ->assertOk();
 
-        $returnedIds = collect($response->json('data'))->pluck('id')->sort()->values()->all();
+        $returnedIds = array_column($response->json('data'), 'id');
+        sort($returnedIds);
 
-        $this->assertSame($mine->pluck('id')->sort()->values()->all(), $returnedIds);
+        $expectedIds = $mine->pluck('id')->all();
+        sort($expectedIds);
+
+        $this->assertSame($expectedIds, $returnedIds);
     }
 
     public function test_creating_a_garment_attaches_it_to_the_signed_in_account(): void

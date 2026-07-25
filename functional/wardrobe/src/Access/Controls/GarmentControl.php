@@ -3,9 +3,9 @@
 namespace Functional\Wardrobe\Access\Controls;
 
 use Functional\Users\Enums\Ability;
+use Functional\Users\Models\User;
 use Functional\Wardrobe\Models\Garment;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Lomkit\Access\Controls\Control;
 use Lomkit\Access\Perimeters\Perimeter;
 
@@ -22,11 +22,11 @@ class GarmentControl extends Control
     {
         return [
             Perimeter::new()
-                ->allowed(fn (Model $user, string $method): bool => $user->can(
+                ->allowed(fn (User $user, string $method): bool => $user->can(
                     self::abilityFor($method)->value,
                 ))
-                ->should(fn (Model $user, Model $garment): bool => $garment->user_id === $user->getKey())
-                ->query(fn (Builder $query, Model $user): Builder => $query->where(
+                ->should(fn (User $user, Garment $garment): bool => $garment->user_id === $user->getKey())
+                ->query(fn (Builder $query, User $user): Builder => $query->where(
                     'user_id',
                     $user->getKey(),
                 )),
