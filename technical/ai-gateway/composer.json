@@ -1,0 +1,25 @@
+{
+    "name": "technical/ai-gateway",
+    "description": "",
+    "type": "layer",
+    "version": "1.0.0",
+    "require": {
+        "xefi/laravel-osdd": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Technical\\AiGateway\\": "src/",
+            "Technical\\AiGateway\\Database\\Seeders\\": "database/seeders/",
+            "Technical\\AiGateway\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Technical\\AiGateway\\Providers\\AiGatewayServiceProvider"
+            ]
+        }
+    }
+}
