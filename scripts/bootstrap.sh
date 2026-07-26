@@ -15,12 +15,16 @@ usage() {
 Usage: scripts/bootstrap.sh <stage>
 
 Stages, to run in order:
-  system     Install PHP, Composer, Node, PostgreSQL, Redis (requires sudo)
-  database   Create the PostgreSQL role and database (requires sudo)
+  system     Install PHP, Composer and Node on the host (requires sudo)
+  docker     Grant this account access to the Docker socket (requires sudo)
   laravel    Create the Laravel 13 skeleton in this worktree
   packages   Install the mandatory Xefi package set
   osdd       Run the OSDD scaffolding and list the layer commands
-  all        system, database, laravel, packages, osdd in sequence
+  sail       Bring the Sail stack up, then migrate and seed
+  all        system, docker, laravel, packages, osdd, sail in sequence
+
+MySQL and Redis run in Docker through Laravel Sail, so nothing but PHP,
+Composer and Node is installed on the host.
 
 Each stage is safe to re-run: it checks its own preconditions first.
 USAGE
@@ -70,38 +74,25 @@ stage_system() {
         sudo apt-get install -y nodejs
     fi
 
-    say "Installing PostgreSQL and Redis"
-    sudo apt-get install -y postgresql redis-server
-
     say "System stage complete"
     php -v | head -1
     composer --version
     node -v
 }
 
-stage_database() {
-    have psql || die "PostgreSQL client not found. Run: scripts/bootstrap.sh system"
+stage_docker() {
+    have docker || die "Docker not found. Install Docker Desktop and enable WSL integration for this distribution."
 
-    local db_user="${DB_USERNAME:-wardrobe}"
-    local db_pass="${DB_PASSWORD:-wardrobe}"
-    local db_name="${DB_DATABASE:-wardrobe}"
-
-    say "Creating the PostgreSQL role and database (sudo password required)"
-
-    if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '${db_user}'" | grep -q 1; then
-        say "Role ${db_user} already exists, skipping"
-    else
-        sudo -u postgres psql -c "CREATE ROLE ${db_user} LOGIN PASSWORD '${db_pass}' CREATEDB"
+    if docker info >/dev/null 2>&1; then
+        say "Docker is already reachable, skipping"
+        return
     fi
 
-    if sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname = '${db_name}'" | grep -q 1; then
-        say "Database ${db_name} already exists, skipping"
-    else
-        sudo -u postgres createdb -O "${db_user}" "${db_name}"
-    fi
+    say "Granting ${USER} access to the Docker socket (sudo password required)"
+    sudo usermod -aG docker "${USER}"
 
-    say "Database stage complete"
-    PGPASSWORD="${db_pass}" psql -h 127.0.0.1 -U "${db_user}" -d "${db_name}" -c 'SELECT version();'
+    warn "Group membership only applies to new sessions."
+    warn "Close this shell and open a new one, or run: newgrp docker"
 }
 
 stage_laravel() {
@@ -179,7 +170,9 @@ stage_osdd() {
 Layers to create, per docs/superpowers/specs/2026-07-25-wardrobe-management-api-design.md:
 
   technical/   media, ai-gateway
-  functional/  identity, catalog, wardrobe, identification, styling, resale
+  functional/  catalog, wardrobe, identification, styling, resale
+
+The users layer is created by osdd:start, so it is not in that list.
 
 The exact layer-creation command is printed above. It was deliberately not hardcoded
 in this script so that the real signature from the installed package is used rather
@@ -187,14 +180,35 @@ than a guessed one.
 NEXT
 }
 
+stage_sail() {
+    [ -f "${PROJECT_ROOT}/vendor/bin/sail" ] || die "Sail is not installed. Run: scripts/bootstrap.sh packages"
+    cd "${PROJECT_ROOT}"
+
+    docker info >/dev/null 2>&1 || die "Docker is unreachable. Run: scripts/bootstrap.sh docker"
+
+    say "Bringing the Sail stack up"
+    ./vendor/bin/sail up -d
+
+    say "Waiting for MySQL to accept connections"
+    ./vendor/bin/sail exec -T mysql sh -c 'until mysqladmin ping --silent; do sleep 1; done'
+
+    say "Migrating and seeding"
+    ./vendor/bin/sail artisan migrate:fresh --no-interaction
+    ./vendor/bin/sail artisan osdd:seed --no-interaction
+
+    say "Sail stage complete"
+    ./vendor/bin/sail artisan about --only=environment,drivers
+}
+
 main() {
     case "${1:-}" in
         system)   stage_system ;;
-        database) stage_database ;;
+        docker)   stage_docker ;;
         laravel)  stage_laravel ;;
         packages) stage_packages ;;
         osdd)     stage_osdd ;;
-        all)      stage_system; stage_database; stage_laravel; stage_packages; stage_osdd ;;
+        sail)     stage_sail ;;
+        all)      stage_system; stage_docker; stage_laravel; stage_packages; stage_osdd; stage_sail ;;
         *)        usage; exit 1 ;;
     esac
 }
