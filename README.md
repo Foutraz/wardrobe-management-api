@@ -8,12 +8,12 @@ La référence concurrente est *Alta Daily: Digital AI Closet*, à laquelle ce p
 deux fonctions absentes : le **suivi de disponibilité** des vêtements et la **mise en vente
 assistée sur Vinted**.
 
-> **État du projet** : tranches 1 et 2 livrées, tranche 3 livrée côté domaine. 60 tests verts,
-> Larastan niveau 7 à zéro erreur.
+> **État du projet** : tranches 1, 2 et 3 livrées. 68 tests verts, Larastan niveau 7 à zéro
+> erreur, 20 routes sur `/api/v1`.
 >
-> Ce qui manque à la tranche 3 : la **surface HTTP** des tenues — Resources lomkit, Controls
-> d'accès et endpoint de prévisualisation. Le domaine (schéma, cycle de vie des rendus, cache,
-> composition de la planche) est en place et testé, mais rien n'est encore exposé sur l'API.
+> Reste dans la tranche 3 : la surface HTTP des **avatars** — le modèle et le versionnement
+> existent et entrent dans la clé de cache, mais aucun endpoint ne les expose encore. Sans
+> conséquence tant que l'essayage sur avatar n'est pas branché ; la planche, elle, tourne.
 >
 > Voir le [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
 
