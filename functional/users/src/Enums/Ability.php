@@ -12,6 +12,11 @@ enum Ability: string
     case ViewProduct = 'catalog.product.view';
     case ContributeProduct = 'catalog.product.contribute';
     case ModerateCatalog = 'catalog.moderate';
+    case ViewOutfit = 'styling.outfit.view';
+    case CreateOutfit = 'styling.outfit.create';
+    case UpdateOutfit = 'styling.outfit.update';
+    case DeleteOutfit = 'styling.outfit.delete';
+    case RenderPreview = 'styling.preview.render';
 
     /**
      * Determine whether this ability belongs to the back-office rather than to an end user.
