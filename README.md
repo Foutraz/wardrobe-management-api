@@ -66,8 +66,9 @@ passer d'une exécution locale à une API managée sans toucher au reste du code
 | | |
 |---|---|
 | Runtime | PHP 8.5 (repli 8.4), Laravel 13 |
-| Base de données | PostgreSQL |
-| File d'attente et cache | Redis |
+| Environnement local | Docker Desktop + Laravel Sail |
+| Base de données | MySQL 8.4, en conteneur |
+| File d'attente et cache | Redis, en conteneur |
 | CRUD et API | `lomkit/laravel-rest-api` |
 | Autorisation | `lomkit/laravel-access-control` |
 | Rôles et permissions | `spatie/laravel-permission` |
@@ -109,11 +110,12 @@ Aucun prérequis n'est installé sur une machine neuve. Le script d'amorçage co
 l'ensemble, par étapes réexécutables :
 
 ```bash
-scripts/bootstrap.sh system     # PHP, Composer, Node, PostgreSQL, Redis — demande sudo
-scripts/bootstrap.sh database   # rôle et base PostgreSQL — demande sudo
+scripts/bootstrap.sh system     # PHP, Composer, Node sur l'hôte — demande sudo
+scripts/bootstrap.sh docker     # accès au socket Docker — demande sudo
 scripts/bootstrap.sh laravel    # squelette Laravel 13
 scripts/bootstrap.sh packages   # jeu de packages Xefi obligatoire
 scripts/bootstrap.sh osdd       # scaffolding des layers
+scripts/bootstrap.sh sail       # démarre la stack, migre et sème
 ```
 
 Ou d'un bloc :
@@ -122,9 +124,30 @@ Ou d'un bloc :
 scripts/bootstrap.sh all
 ```
 
-Les étapes `system` et `database` requièrent un mot de passe sudo et doivent donc être
-lancées manuellement. Une fois `database` passée, basculer `DB_CONNECTION` sur `pgsql`
-dans `.env` en suivant `.env.example`.
+MySQL et Redis tournent dans Docker via Sail : rien d'autre que PHP, Composer et Node n'est
+installé sur l'hôte. Les étapes `system` et `docker` requièrent un mot de passe sudo.
+
+L'étape `docker` ajoute votre compte au groupe `docker`. **L'appartenance à un groupe ne
+prend effet que dans une nouvelle session** — fermez le shell et rouvrez-en un, ou lancez
+`newgrp docker`.
+
+### Au quotidien
+
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan test
+```
+
+Les tests tournent sur MySQL, le même moteur qu'en production. Pour une exécution rapide
+sans conteneur, un override en ligne de commande bascule sur SQLite en mémoire :
+
+```bash
+DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test
+```
+
+Attention : la contrainte `CHECK` sur `outfit_items` n'existe pas sous SQLite, seul le
+listener y veille. Une exécution sous Sail reste la référence.
 
 ### À savoir sur `osdd:start`
 
