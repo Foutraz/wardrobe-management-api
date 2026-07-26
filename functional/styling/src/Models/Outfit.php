@@ -4,9 +4,11 @@ namespace Functional\Styling\Models;
 
 use Functional\Styling\Database\Factories\OutfitFactory;
 use Functional\Styling\Enums\Season;
+use Functional\Styling\Policies\OutfitPolicy;
 use Functional\Users\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Lomkit\Access\Controls\HasControl;
 
 /**
  * @property string $id
@@ -30,12 +33,13 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable(['name', 'occasion', 'season', 'notes'])]
 #[UseFactory(OutfitFactory::class)]
+#[UsePolicy(OutfitPolicy::class)]
 class Outfit extends Model
 {
+    use HasControl, HasUlids, Prunable, SoftDeletes;
+
     /** @use HasFactory<OutfitFactory> */
     use HasFactory;
-
-    use HasUlids, Prunable, SoftDeletes;
 
     /**
      * @return BelongsTo<User, $this>
