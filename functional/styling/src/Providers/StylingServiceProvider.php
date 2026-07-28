@@ -7,14 +7,18 @@ use Functional\Styling\Access\Controls\OutfitControl;
 use Functional\Styling\Database\Seeders\StylingSeeder;
 use Functional\Styling\Listeners\AssignAuthenticatedOwner;
 use Functional\Styling\Listeners\CascadeAvatarDeletion;
+use Functional\Styling\Listeners\CascadeGarmentOutOfOutfits;
 use Functional\Styling\Listeners\CascadeOutfitDeletion;
 use Functional\Styling\Listeners\CascadeUserStylingDeletion;
+use Functional\Styling\Listeners\CascadeWishlistItemOutOfOutfits;
 use Functional\Styling\Listeners\GuardOutfitItemReference;
 use Functional\Styling\Models\Avatar;
 use Functional\Styling\Models\Outfit;
 use Functional\Styling\Models\OutfitItem;
 use Functional\Styling\Models\OutfitPlan;
 use Functional\Users\Models\User;
+use Functional\Wardrobe\Models\Garment;
+use Functional\Wardrobe\Models\WishlistItem;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
@@ -33,6 +37,8 @@ class StylingServiceProvider extends LayerServiceProvider
         User::deleting(CascadeUserStylingDeletion::class);
         Outfit::deleting(CascadeOutfitDeletion::class);
         Avatar::deleting(CascadeAvatarDeletion::class);
+        Garment::deleting(CascadeGarmentOutOfOutfits::class);
+        WishlistItem::deleting(CascadeWishlistItemOutOfOutfits::class);
 
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
