@@ -2,6 +2,7 @@
 
 namespace Functional\Styling\Providers;
 
+use Functional\Styling\Access\Controls\AvatarControl;
 use Functional\Styling\Access\Controls\OutfitControl;
 use Functional\Styling\Database\Seeders\StylingSeeder;
 use Functional\Styling\Listeners\AssignAuthenticatedOwner;
@@ -49,6 +50,7 @@ class StylingServiceProvider extends LayerServiceProvider
     public function register(): void
     {
         (new Access)->addControls([
+            new AvatarControl,
             new OutfitControl,
         ]);
     }

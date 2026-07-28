@@ -3,15 +3,18 @@
 namespace Functional\Styling\Models;
 
 use Functional\Styling\Database\Factories\AvatarFactory;
+use Functional\Styling\Policies\AvatarPolicy;
 use Functional\Users\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Lomkit\Access\Controls\HasControl;
 
 /**
  * @property string $id
@@ -22,12 +25,13 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable(['name'])]
 #[UseFactory(AvatarFactory::class)]
+#[UsePolicy(AvatarPolicy::class)]
 class Avatar extends Model
 {
+    use HasControl, HasUlids;
+
     /** @use HasFactory<AvatarFactory> */
     use HasFactory;
-
-    use HasUlids;
 
     /**
      * @return BelongsTo<User, $this>
