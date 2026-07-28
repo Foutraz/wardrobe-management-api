@@ -17,6 +17,7 @@ enum Ability: string
     case UpdateOutfit = 'styling.outfit.update';
     case DeleteOutfit = 'styling.outfit.delete';
     case RenderPreview = 'styling.preview.render';
+    case ManageAvatar = 'styling.avatar.manage';
 
     /**
      * Determine whether this ability belongs to the back-office rather than to an end user.
