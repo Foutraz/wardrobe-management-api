@@ -54,7 +54,7 @@ stage_system() {
     sudo apt-get install -y \
         "php${version}-cli" "php${version}-mbstring" "php${version}-xml" \
         "php${version}-curl" "php${version}-zip" "php${version}-bcmath" \
-        "php${version}-intl" "php${version}-gd" "php${version}-pgsql" \
+        "php${version}-intl" "php${version}-gd" "php${version}-mysql" \
         "php${version}-redis" "php${version}-sqlite3"
 
     if have composer; then
