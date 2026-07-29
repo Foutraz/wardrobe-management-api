@@ -5,6 +5,7 @@ namespace Functional\Wardrobe\Models;
 use Functional\Catalog\Models\ProductVariant;
 use Functional\Users\Models\User;
 use Functional\Wardrobe\Database\Factories\WishlistItemFactory;
+use Functional\Wardrobe\Enums\WishlistMediaCollection;
 use Functional\Wardrobe\Policies\WishlistItemPolicy;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -15,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Lomkit\Access\Controls\HasControl;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string $id
@@ -44,12 +47,22 @@ use Lomkit\Access\Controls\HasControl;
 ])]
 #[UseFactory(WishlistItemFactory::class)]
 #[UsePolicy(WishlistItemPolicy::class)]
-class WishlistItem extends Model
+class WishlistItem extends Model implements HasMedia
 {
-    use HasControl, HasUlids;
+    use HasControl, HasUlids, InteractsWithMedia;
 
     /** @use HasFactory<WishlistItemFactory> */
     use HasFactory;
+
+    /**
+     * Hold a cached copy of the shop's product shot, kept only long enough to lay it out.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(WishlistMediaCollection::CachedImage->value)
+            ->acceptsMimeTypes(WishlistMediaCollection::CachedImage->acceptedMimeTypes())
+            ->singleFile();
+    }
 
     /**
      * @return BelongsTo<User, $this>

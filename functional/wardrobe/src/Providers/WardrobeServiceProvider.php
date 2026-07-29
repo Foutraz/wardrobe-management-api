@@ -6,6 +6,7 @@ use Functional\Catalog\Events\ProductVariantMerged;
 use Functional\Users\Models\User;
 use Functional\Wardrobe\Access\Controls\GarmentControl;
 use Functional\Wardrobe\Access\Controls\WishlistItemControl;
+use Functional\Wardrobe\Console\Commands\PruneWishlistImagesCommand;
 use Functional\Wardrobe\Database\Seeders\WardrobeSeeder;
 use Functional\Wardrobe\Listeners\AssignAuthenticatedOwner;
 use Functional\Wardrobe\Listeners\CascadeGarmentDeletion;
@@ -34,6 +35,7 @@ class WardrobeServiceProvider extends LayerServiceProvider
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
             $this->loadSeeders([WardrobeSeeder::class]);
+            $this->commands([PruneWishlistImagesCommand::class]);
         }
 
         $this->withRouting(
