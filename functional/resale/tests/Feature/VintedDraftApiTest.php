@@ -75,7 +75,7 @@ class VintedDraftApiTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->postJson("/api/v1/garments/{$garment->id}/vinted-draft")->assertStatus(500);
+        $this->postJson("/api/v1/garments/{$garment->id}/vinted-draft")->assertUnprocessable();
 
         $this->assertSame(0, VintedListingDraft::query()->count());
     }
@@ -108,7 +108,7 @@ class VintedDraftApiTest extends TestCase
 
         $this->putJson("/api/v1/vinted-listing-drafts/{$draft->id}/status", [
             'status' => VintedDraftStatus::Draft->value,
-        ])->assertStatus(500);
+        ])->assertConflict();
 
         $this->assertSame(VintedDraftStatus::HandedOff, $draft->fresh()->status);
     }

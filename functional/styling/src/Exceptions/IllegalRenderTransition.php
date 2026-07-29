@@ -3,6 +3,7 @@
 namespace Functional\Styling\Exceptions;
 
 use Functional\Styling\Enums\RenderStatus;
+use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class IllegalRenderTransition extends RuntimeException
@@ -17,5 +18,16 @@ class IllegalRenderTransition extends RuntimeException
             $from->value,
             $to->value,
         ));
+    }
+
+    /**
+     * Answer with a conflict status, since the render is simply not in a state that allows this move.
+     */
+    public function render(): JsonResponse
+    {
+        return new JsonResponse(
+            ['message' => $this->getMessage()],
+            JsonResponse::HTTP_CONFLICT,
+        );
     }
 }

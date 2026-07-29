@@ -3,6 +3,7 @@
 namespace Functional\Resale\Exceptions;
 
 use Functional\Resale\Enums\VintedDraftStatus;
+use Illuminate\Http\JsonResponse;
 use RuntimeException;
 
 class IllegalDraftTransition extends RuntimeException
@@ -17,5 +18,16 @@ class IllegalDraftTransition extends RuntimeException
             $from->value,
             $to->value,
         ));
+    }
+
+    /**
+     * Answer with a conflict status, since the draft is simply not in a state that allows this move.
+     */
+    public function render(): JsonResponse
+    {
+        return new JsonResponse(
+            ['message' => $this->getMessage()],
+            JsonResponse::HTTP_CONFLICT,
+        );
     }
 }
