@@ -6,9 +6,14 @@ use Functional\Resale\Contracts\ListingPublisher;
 use Functional\Resale\Models\VintedListingDraft;
 use Functional\Resale\Values\HandoffInstructions;
 use Functional\Wardrobe\Enums\GarmentMediaCollection;
+use Technical\Media\Services\SignedMediaUrl;
 
 class AssistedHandoff implements ListingPublisher
 {
+    public function __construct(
+        private readonly SignedMediaUrl $signer,
+    ) {}
+
     public function name(): string
     {
         return 'assisted-handoff';
@@ -25,7 +30,7 @@ class AssistedHandoff implements ListingPublisher
             $garment
                 ->getMedia(GarmentMediaCollection::Cutouts->value)
                 ->merge($garment->getMedia(GarmentMediaCollection::Photos->value))
-                ->map(fn ($media): string => $media->getFullUrl())
+                ->map(fn ($media): string => (string) $this->signer->for($media))
                 ->all(),
         );
 

@@ -13,19 +13,11 @@ use Functional\Wardrobe\Enums\GarmentMediaCollection;
 use Functional\Wardrobe\Models\Garment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class FlatLayRendererTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake('public');
-    }
 
     public function test_it_lays_out_the_garments_that_have_an_image(): void
     {
@@ -36,6 +28,41 @@ class FlatLayRendererTest extends TestCase
         $this->assertSame(RenderStatus::Succeeded, $preview->status);
         $this->assertSame(PreviewMode::FlatLay, $preview->mode);
         $this->assertCount(1, $preview->getMedia(StylingMediaCollection::Render->value));
+    }
+
+    public function test_the_rendered_flat_lay_actually_contains_the_garments(): void
+    {
+        $outfit = $this->outfitWithPhotographedGarments(2);
+
+        $preview = app(FlatLayRenderer::class)->render($outfit);
+        $render = $preview->getFirstMedia(StylingMediaCollection::Render->value);
+
+        $this->assertNotNull($render);
+
+        $canvas = imagecreatefromstring((string) stream_get_contents($render->stream()));
+
+        $this->assertNotFalse($canvas, 'the render must be a decodable image');
+        $this->assertGreaterThan(0, $this->opaquePixelCount($canvas), 'a blank canvas means nothing was drawn');
+    }
+
+    /**
+     * Count pixels that are not fully transparent, sampling a grid to keep it quick.
+     */
+    private function opaquePixelCount(\GdImage $canvas): int
+    {
+        $opaque = 0;
+        $width = imagesx($canvas);
+        $height = imagesy($canvas);
+
+        for ($x = 0; $x < $width; $x += 8) {
+            for ($y = 0; $y < $height; $y += 8) {
+                if (((imagecolorat($canvas, $x, $y) >> 24) & 0x7F) < 127) {
+                    $opaque++;
+                }
+            }
+        }
+
+        return $opaque;
     }
 
     public function test_asking_twice_reuses_the_cached_render(): void

@@ -7,14 +7,18 @@ use Functional\Styling\Http\Requests\CreateAvatarVersionRequest;
 use Functional\Styling\Models\Avatar;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Technical\Media\Services\SignedMediaUrl;
 
 class CreateAvatarVersionController
 {
     /**
      * Freeze a new canonical body image, which every later preview renders against.
      */
-    public function __invoke(CreateAvatarVersionRequest $request, Avatar $avatar): JsonResponse
-    {
+    public function __invoke(
+        CreateAvatarVersionRequest $request,
+        Avatar $avatar,
+        SignedMediaUrl $signer,
+    ): JsonResponse {
         Gate::authorize('update', $avatar);
 
         $version = $avatar->versions()->create([
@@ -30,7 +34,7 @@ class CreateAvatarVersionController
                 'id' => $version->getKey(),
                 'version' => $version->version,
                 'has_canonical_image' => $version->fresh()->hasCanonicalImage(),
-                'image_url' => $version->getFirstMediaUrl(StylingMediaCollection::CanonicalImage->value),
+                'image_url' => $signer->for($version->getFirstMedia(StylingMediaCollection::CanonicalImage->value)),
             ],
         ], JsonResponse::HTTP_CREATED);
     }

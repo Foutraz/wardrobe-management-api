@@ -13,7 +13,6 @@ use Functional\Wardrobe\Enums\GarmentMediaCollection;
 use Functional\Wardrobe\Models\Garment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
@@ -21,13 +20,6 @@ use Tests\TestCase;
 class OutfitApiTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake('public');
-    }
 
     public function test_it_rejects_an_unauthenticated_search(): void
     {

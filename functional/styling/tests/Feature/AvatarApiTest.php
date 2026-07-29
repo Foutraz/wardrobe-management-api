@@ -9,7 +9,6 @@ use Functional\Users\Models\Permission;
 use Functional\Users\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
@@ -17,13 +16,6 @@ use Tests\TestCase;
 class AvatarApiTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake('public');
-    }
 
     public function test_creating_an_avatar_attaches_it_to_the_signed_in_account(): void
     {

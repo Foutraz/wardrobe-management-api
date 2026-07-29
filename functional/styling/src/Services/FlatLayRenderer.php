@@ -12,6 +12,7 @@ use Functional\Styling\Values\PreviewCacheKey;
 use Functional\Wardrobe\Enums\GarmentMediaCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Technical\Media\Services\ImageMontage;
+use Technical\Media\Services\MediaScratchFile;
 
 class FlatLayRenderer
 {
@@ -19,6 +20,7 @@ class FlatLayRenderer
 
     public function __construct(
         private readonly ImageMontage $montage,
+        private readonly MediaScratchFile $scratch,
     ) {}
 
     /**
@@ -77,7 +79,13 @@ class FlatLayRenderer
 
         $temporaryPath = tempnam(sys_get_temp_dir(), 'flat-lay-').'.png';
 
-        if (! $this->montage->compose($sourcePaths, $temporaryPath)) {
+        $composed = $this->montage->compose($sourcePaths, $temporaryPath);
+
+        foreach ($sourcePaths as $scratchPath) {
+            $this->scratch->release($scratchPath);
+        }
+
+        if (! $composed) {
             $this->discard($temporaryPath);
             $preview->transitionTo(RenderStatus::Failed, 'The flat lay could not be composed.');
 
@@ -114,7 +122,7 @@ class FlatLayRenderer
                 ?? $garment->getFirstMedia(GarmentMediaCollection::Photos->value);
 
             if ($image !== null) {
-                $paths[] = $image->getPath();
+                $paths[] = $this->scratch->materialise($image);
             }
         }
 
