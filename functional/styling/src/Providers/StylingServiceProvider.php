@@ -4,6 +4,7 @@ namespace Functional\Styling\Providers;
 
 use Functional\Styling\Access\Controls\AvatarControl;
 use Functional\Styling\Access\Controls\OutfitControl;
+use Functional\Styling\Access\Controls\OutfitPlanControl;
 use Functional\Styling\Database\Seeders\StylingSeeder;
 use Functional\Styling\Listeners\AssignAuthenticatedOwner;
 use Functional\Styling\Listeners\CascadeAvatarDeletion;
@@ -58,6 +59,7 @@ class StylingServiceProvider extends LayerServiceProvider
         (new Access)->addControls([
             new AvatarControl,
             new OutfitControl,
+            new OutfitPlanControl,
         ]);
     }
 }
