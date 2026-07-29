@@ -1,0 +1,25 @@
+{
+    "name": "functional/identification",
+    "description": "",
+    "type": "layer",
+    "version": "1.0.0",
+    "require": {
+        "xefi/laravel-osdd": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Functional\\Identification\\": "src/",
+            "Functional\\Identification\\Database\\Seeders\\": "database/seeders/",
+            "Functional\\Identification\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Functional\\Identification\\Providers\\IdentificationServiceProvider"
+            ]
+        }
+    }
+}

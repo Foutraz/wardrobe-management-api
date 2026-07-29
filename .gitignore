@@ -28,3 +28,11 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# IDE
+/.idea/
+/.vscode/
+/.fleet/
+
+/database/*.sqlite
+/database/*.sqlite-journal
