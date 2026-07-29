@@ -2,10 +2,14 @@
 
 namespace Technical\AiGateway\Providers;
 
+use Technical\AiGateway\Contracts\CareLabelReader;
 use Technical\AiGateway\Contracts\CutoutDriver;
 use Technical\AiGateway\Database\Seeders\AiGatewaySeeder;
 use Technical\AiGateway\Drivers\RembgCutoutDriver;
+use Technical\AiGateway\Drivers\TesseractCareLabelReader;
+use Technical\AiGateway\Drivers\UnavailableCareLabelReader;
 use Technical\AiGateway\Drivers\UnavailableCutoutDriver;
+use Technical\AiGateway\Support\CareLabelParser;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
 class AiGatewayServiceProvider extends LayerServiceProvider
@@ -29,6 +33,17 @@ class AiGatewayServiceProvider extends LayerServiceProvider
                     (int) config('ai-gateway.cutout.rembg.timeout'),
                 ),
                 default => new UnavailableCutoutDriver,
+            };
+        });
+
+        $this->app->singleton(CareLabelReader::class, function (): CareLabelReader {
+            return match (config('ai-gateway.care_label.driver')) {
+                'tesseract' => new TesseractCareLabelReader(
+                    new CareLabelParser,
+                    (string) config('ai-gateway.care_label.tesseract.binary'),
+                    (int) config('ai-gateway.care_label.tesseract.timeout'),
+                ),
+                default => new UnavailableCareLabelReader,
             };
         });
     }
