@@ -10,7 +10,9 @@ use Functional\Styling\Models\OutfitItem;
 use Functional\Styling\Models\OutfitPreview;
 use Functional\Styling\Values\PreviewCacheKey;
 use Functional\Wardrobe\Enums\GarmentMediaCollection;
+use Functional\Wardrobe\Enums\WishlistMediaCollection;
 use Illuminate\Database\Eloquent\Collection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Technical\Media\Services\ImageMontage;
 use Technical\Media\Services\MediaScratchFile;
 
@@ -28,7 +30,7 @@ class FlatLayRenderer
      */
     public function render(Outfit $outfit): OutfitPreview
     {
-        $outfitItems = $outfit->items()->with('garment')->get();
+        $outfitItems = $outfit->items()->with(['garment', 'wishlistItem'])->get();
 
         $cacheKey = PreviewCacheKey::for(
             PreviewMode::FlatLay,
@@ -112,14 +114,7 @@ class FlatLayRenderer
         $paths = [];
 
         foreach ($outfitItems->sortBy(fn (OutfitItem $outfitItem): int => $outfitItem->slot->layoutOrder()) as $outfitItem) {
-            $garment = $outfitItem->garment;
-
-            if ($garment === null) {
-                continue;
-            }
-
-            $image = $garment->getFirstMedia(GarmentMediaCollection::Cutouts->value)
-                ?? $garment->getFirstMedia(GarmentMediaCollection::Photos->value);
+            $image = $this->imageFor($outfitItem);
 
             if ($image !== null) {
                 $paths[] = $this->scratch->materialise($image);
@@ -127,6 +122,21 @@ class FlatLayRenderer
         }
 
         return $paths;
+    }
+
+    /**
+     * Find the best image for an item, whether it is owned or merely coveted.
+     */
+    private function imageFor(OutfitItem $outfitItem): ?Media
+    {
+        $garment = $outfitItem->garment;
+
+        if ($garment !== null) {
+            return $garment->getFirstMedia(GarmentMediaCollection::Cutouts->value)
+                ?? $garment->getFirstMedia(GarmentMediaCollection::Photos->value);
+        }
+
+        return $outfitItem->wishlistItem?->getFirstMedia(WishlistMediaCollection::CachedImage->value);
     }
 
     /**
