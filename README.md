@@ -8,16 +8,14 @@ La référence concurrente est *Alta Daily: Digital AI Closet*, à laquelle ce p
 deux fonctions absentes : le **suivi de disponibilité** des vêtements et la **mise en vente
 assistée sur Vinted**.
 
-> **État du projet** : tranches 1, 2, 3 et 4 partielle livrées. 76 tests verts, Larastan
-> niveau 7 à zéro erreur, 26 routes sur `/api/v1`.
+> **État du projet** : les sept blocs fonctionnels sont livrés. **161 tests** (158 passés,
+> 3 ignorés hors MySQL), Larastan niveau 7 à zéro erreur, 37 routes sur `/api/v1`.
 >
-> La tranche 4 tient l'avatar de bout en bout — versionnement et image canonique fournie par
-> l'utilisateur. L'**essayage sur avatar** reste à brancher : il dépend d'un fournisseur que
-> la licence n'autorise qu'en usage personnel, voir le
+> Deux choses restent à brancher, toutes deux dépendantes d'un fournisseur externe :
+> l'**essayage sur avatar** (modèles sous licence non commerciale) et l'**extraction
+> d'attributs par photo**. Le détourage et l'OCR d'étiquette attendent seulement qu'un pilote
+> soit installé. Voir le
 > [document de conception](docs/superpowers/specs/2026-07-25-wardrobe-management-api-design.md).
->
-> Restent les tranches 5 (identification), 6 (revente) et 7 (back-office), voir le
-> [plan d'implémentation](docs/superpowers/plans/2026-07-25-implementation-plan.md).
 
 ## Fonctionnalités
 
