@@ -2,6 +2,7 @@
 
 namespace Functional\Wardrobe\Providers;
 
+use Functional\Catalog\Events\ProductVariantMerged;
 use Functional\Users\Models\User;
 use Functional\Wardrobe\Access\Controls\GarmentControl;
 use Functional\Wardrobe\Access\Controls\WishlistItemControl;
@@ -9,8 +10,10 @@ use Functional\Wardrobe\Database\Seeders\WardrobeSeeder;
 use Functional\Wardrobe\Listeners\AssignAuthenticatedOwner;
 use Functional\Wardrobe\Listeners\CascadeGarmentDeletion;
 use Functional\Wardrobe\Listeners\CascadeUserDeletion;
+use Functional\Wardrobe\Listeners\RepointGarmentsAfterVariantMerge;
 use Functional\Wardrobe\Models\Garment;
 use Functional\Wardrobe\Models\WishlistItem;
+use Illuminate\Support\Facades\Event;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
@@ -25,6 +28,8 @@ class WardrobeServiceProvider extends LayerServiceProvider
 
         User::deleting(CascadeUserDeletion::class);
         Garment::deleting(CascadeGarmentDeletion::class);
+
+        Event::listen(ProductVariantMerged::class, RepointGarmentsAfterVariantMerge::class);
 
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');

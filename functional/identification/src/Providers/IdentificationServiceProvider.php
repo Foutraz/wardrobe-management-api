@@ -2,12 +2,15 @@
 
 namespace Functional\Identification\Providers;
 
+use Functional\Catalog\Events\ProductVariantMerged;
 use Functional\Identification\Access\Controls\IdentificationRequestControl;
 use Functional\Identification\Database\Seeders\IdentificationSeeder;
 use Functional\Identification\Listeners\CascadeUserIdentificationDeletion;
 use Functional\Identification\Listeners\ForgetGarmentOnIdentification;
+use Functional\Identification\Listeners\RepointIdentificationsAfterVariantMerge;
 use Functional\Users\Models\User;
 use Functional\Wardrobe\Models\Garment;
+use Illuminate\Support\Facades\Event;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
@@ -19,6 +22,8 @@ class IdentificationServiceProvider extends LayerServiceProvider
 
         User::deleting(CascadeUserIdentificationDeletion::class);
         Garment::deleting(ForgetGarmentOnIdentification::class);
+
+        Event::listen(ProductVariantMerged::class, RepointIdentificationsAfterVariantMerge::class);
 
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
