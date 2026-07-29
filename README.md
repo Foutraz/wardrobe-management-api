@@ -8,9 +8,13 @@ La référence concurrente est *Alta Daily: Digital AI Closet*, à laquelle ce p
 deux fonctions absentes : le **suivi de disponibilité** des vêtements et la **mise en vente
 assistée sur Vinted**.
 
-> **État du projet** : les sept blocs fonctionnels sont livrés. **161 tests, 161 passés,
-> 528 assertions — vérifiés sur MySQL 8.4 via Sail**, Larastan niveau 7 à zéro erreur,
-> 37 routes sur `/api/v1`. La contrainte `CHECK` sur `outfit_items` est éprouvée en base.
+> **État du projet** : utilisable de bout en bout en usage personnel. **238 tests, 238 passés,
+> 700 assertions — vérifiés sur MySQL 8.4 et RustFS via Sail**, Larastan niveau 7 à zéro
+> erreur, 48 routes sur `/api/v1`.
+>
+> Reste à décider, pas à coder : le fournisseur d'**essayage sur avatar** (dépend du matériel
+> cible) et l'**hôte des URL signées** au déploiement, qui doit être joignable par l'API comme
+> par les clients.
 >
 > Deux choses restent à brancher, toutes deux dépendantes d'un fournisseur externe :
 > l'**essayage sur avatar** (modèles sous licence non commerciale) et l'**extraction
