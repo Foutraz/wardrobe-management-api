@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'sidecar' => [
+        'url' => env('AI_SIDECAR_URL', 'http://ai:9100'),
+        'timeout' => (int) env('AI_SIDECAR_TIMEOUT', 120),
+    ],
+
     'cutout' => [
         'driver' => env('AI_CUTOUT_DRIVER', 'none'),
 
