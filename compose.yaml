@@ -51,9 +51,11 @@ services:
         networks:
             - sail
         healthcheck:
+            # The S3 root answers an error to an anonymous request, so this checks that
+            # the port answers at all rather than that it answers 200.
             test:
                 - CMD-SHELL
-                - "curl -sf http://localhost:9000 >/dev/null || exit 1"
+                - "curl -s -o /dev/null http://localhost:9000 || exit 1"
             retries: 5
             timeout: 5s
             start_period: 10s

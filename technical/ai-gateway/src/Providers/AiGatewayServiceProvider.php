@@ -5,6 +5,7 @@ namespace Technical\AiGateway\Providers;
 use Technical\AiGateway\Contracts\CareLabelReader;
 use Technical\AiGateway\Contracts\CutoutDriver;
 use Technical\AiGateway\Database\Seeders\AiGatewaySeeder;
+use Technical\AiGateway\Drivers\HttpCareLabelReader;
 use Technical\AiGateway\Drivers\HttpCutoutDriver;
 use Technical\AiGateway\Drivers\RembgCutoutDriver;
 use Technical\AiGateway\Drivers\TesseractCareLabelReader;
@@ -43,6 +44,11 @@ class AiGatewayServiceProvider extends LayerServiceProvider
 
         $this->app->singleton(CareLabelReader::class, function (): CareLabelReader {
             return match (config('ai-gateway.care_label.driver')) {
+                'sidecar' => new HttpCareLabelReader(
+                    new CareLabelParser,
+                    (string) config('ai-gateway.sidecar.url'),
+                    (int) config('ai-gateway.sidecar.timeout'),
+                ),
                 'tesseract' => new TesseractCareLabelReader(
                     new CareLabelParser,
                     (string) config('ai-gateway.care_label.tesseract.binary'),

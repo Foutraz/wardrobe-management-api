@@ -61,7 +61,13 @@ class CareLabelParser
      */
     private function composition(string $text): ?string
     {
-        $pattern = sprintf('/(\d{1,3})\s*%%\s*(%s)\b/', implode('|', array_keys(self::FIBRES)));
+        // Tesseract reads "95%" as "954", so a 4 is accepted where the percent sign belongs.
+        // Three guards keep that from inventing shares: the separator is required, the share is
+        // capped at 100, and the lookbehind stops the match starting inside a longer number.
+        $pattern = sprintf(
+            '/(?<!\d)(100|\d{1,2})\s*(?:%%|4)\s*(%s)\b/',
+            implode('|', array_keys(self::FIBRES)),
+        );
 
         preg_match_all($pattern, $text, $matches, PREG_SET_ORDER);
 

@@ -9,6 +9,7 @@ use Technical\AiGateway\Contracts\CareLabelReader;
 use Technical\AiGateway\Enums\AiOperationKind;
 use Technical\AiGateway\Services\AiOperationJournal;
 use Technical\AiGateway\Values\AttributeReading;
+use Technical\Media\Services\MediaScratchFile;
 
 class IdentificationPipeline
 {
@@ -16,6 +17,7 @@ class IdentificationPipeline
         private readonly BarcodeResolver $barcodeResolver,
         private readonly CareLabelReader $careLabelReader,
         private readonly AiOperationJournal $journal,
+        private readonly MediaScratchFile $scratch,
     ) {}
 
     /**
@@ -77,9 +79,16 @@ class IdentificationPipeline
         }
 
         if ($request->kind === IdentificationKind::CareLabel) {
-            return $this->careLabelReader->isAvailable()
-                ? $this->careLabelReader->read($image->getPath())
-                : AttributeReading::unavailable('No care label reader is available on this machine.');
+            if (! $this->careLabelReader->isAvailable()) {
+                return AttributeReading::unavailable('No care label reader is available on this machine.');
+            }
+
+            // getPath() is an object key on S3, so the bytes are copied locally first.
+            $scratchPath = $this->scratch->materialise($image);
+            $reading = $this->careLabelReader->read($scratchPath);
+            $this->scratch->release($scratchPath);
+
+            return $reading;
         }
 
         return AttributeReading::unavailable('No garment vision reader is available on this machine.');

@@ -23,6 +23,29 @@ class CareLabelParserTest extends TestCase
         $this->assertSame('100% Cotton', $parsed['material_composition']);
     }
 
+    public function test_it_survives_ocr_misreading_the_percent_sign(): void
+    {
+        // Observed from a real tesseract run: "95%" came back as "954".
+        $parsed = $this->parser->parse('954 VISCOSE 5% ELASTANE');
+
+        $this->assertSame('95% Viscose, 5% Elastane', $parsed['material_composition']);
+    }
+
+    public function test_it_refuses_to_invent_a_share_from_a_longer_number(): void
+    {
+        $parsed = $this->parser->parse('REF 954321 COTTON JACKET');
+
+        $this->assertArrayNotHasKey('material_composition', $parsed);
+    }
+
+    public function test_it_does_not_mistake_a_wash_temperature_for_a_share(): void
+    {
+        // A degree sign is a washing instruction, never a proportion.
+        $parsed = $this->parser->parse('LAVER A 60° LAINE');
+
+        $this->assertArrayNotHasKey('material_composition', $parsed);
+    }
+
     public function test_it_reads_a_blended_composition_in_order(): void
     {
         $parsed = $this->parser->parse('68% COTTON 29% POLYAMIDE 3% ELASTANE');
