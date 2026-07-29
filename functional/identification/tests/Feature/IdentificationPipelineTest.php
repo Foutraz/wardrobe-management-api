@@ -10,7 +10,6 @@ use Functional\Identification\Models\IdentificationRequest;
 use Functional\Identification\Services\IdentificationPipeline;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Technical\AiGateway\Contracts\CareLabelReader;
 use Technical\AiGateway\Enums\AiOperationKind;
 use Technical\AiGateway\Enums\AiOperationStatus;
@@ -21,13 +20,6 @@ use Tests\TestCase;
 class IdentificationPipelineTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake('public');
-    }
 
     public function test_a_known_barcode_leaves_the_request_awaiting_confirmation(): void
     {

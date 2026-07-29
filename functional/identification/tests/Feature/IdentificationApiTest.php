@@ -8,7 +8,6 @@ use Functional\Identification\Enums\IdentificationKind;
 use Functional\Identification\Enums\IdentificationStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Tests\Support\MemberAccount;
 use Tests\TestCase;
@@ -16,13 +15,6 @@ use Tests\TestCase;
 class IdentificationApiTest extends TestCase
 {
     use MemberAccount, RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake('public');
-    }
 
     public function test_it_rejects_an_unauthenticated_submission(): void
     {

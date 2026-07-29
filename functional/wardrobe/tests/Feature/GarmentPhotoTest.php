@@ -9,7 +9,6 @@ use Functional\Wardrobe\Enums\GarmentMediaCollection;
 use Functional\Wardrobe\Models\Garment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\PermissionRegistrar;
 use Technical\AiGateway\Contracts\CutoutDriver;
@@ -22,13 +21,6 @@ use Tests\TestCase;
 class GarmentPhotoTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake('public');
-    }
 
     public function test_uploading_a_photo_files_it_under_the_photos_collection(): void
     {
