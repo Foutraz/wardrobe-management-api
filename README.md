@@ -87,7 +87,7 @@ distinctes.
 
 | Besoin | Solution retenue | Note |
 |--------|------------------|------|
-| Détourage des photos | Pilote sélectionnable, `rembg` par défaut | Aucun pilote installé : le statut le dit, rien n'est maquillé |
+| Détourage et OCR | Conteneur annexe `ai` (rembg + tesseract) | Activer avec `AI_CUTOUT_DRIVER=sidecar` et `AI_CARE_LABEL_DRIVER=sidecar` |
 | OCR d'étiquette | Tesseract en local | Gratuit |
 | Attributs par vision | API multimodale | Coût négligeable à l'échelle personnelle |
 | Essayage virtuel | Modèles libres en licence **non commerciale** | Légal en usage personnel uniquement |
