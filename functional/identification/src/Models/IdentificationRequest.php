@@ -7,15 +7,18 @@ use Functional\Identification\Database\Factories\IdentificationRequestFactory;
 use Functional\Identification\Enums\IdentificationKind;
 use Functional\Identification\Enums\IdentificationStatus;
 use Functional\Identification\Exceptions\IllegalIdentificationTransition;
+use Functional\Identification\Policies\IdentificationRequestPolicy;
 use Functional\Users\Models\User;
 use Functional\Wardrobe\Models\Garment;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Lomkit\Access\Controls\HasControl;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -37,12 +40,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 #[Fillable(['kind', 'barcode'])]
 #[UseFactory(IdentificationRequestFactory::class)]
+#[UsePolicy(IdentificationRequestPolicy::class)]
 class IdentificationRequest extends Model implements HasMedia
 {
+    use HasControl, HasUlids, InteractsWithMedia;
+
     /** @use HasFactory<IdentificationRequestFactory> */
     use HasFactory;
-
-    use HasUlids, InteractsWithMedia;
 
     public const SUBJECT_COLLECTION = 'subject';
 

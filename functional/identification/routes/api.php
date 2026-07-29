@@ -1,7 +1,13 @@
 <?php
 
+use Functional\Identification\Http\Controllers\ConfirmIdentificationController;
+use Functional\Identification\Http\Controllers\SubmitIdentificationController;
 use Illuminate\Support\Facades\Route;
 
-// Routes here are wrapped in the 'api' middleware group with the 'api'
-// prefix by the layer service provider. To version your endpoints
-// (/api/v1/...), nest Route::prefix('v1')->group(...) inside.
+Route::prefix('v1')->middleware(['auth:sanctum', 'locale'])->group(function (): void {
+    Route::post('identifications', SubmitIdentificationController::class)
+        ->name('identifications.store');
+
+    Route::post('identifications/{identificationRequest}/confirmation', ConfirmIdentificationController::class)
+        ->name('identifications.confirmation.store');
+});
