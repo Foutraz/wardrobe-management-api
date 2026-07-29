@@ -12,6 +12,7 @@ class CutoutPipeline
 {
     public function __construct(
         private readonly CutoutService $cutoutService,
+        private readonly MediaScratchFile $scratch,
     ) {}
 
     /**
@@ -23,17 +24,20 @@ class CutoutPipeline
         string $destinationCollection,
         ?string $userId = null,
     ): OperationOutcome {
+        $sourcePath = $this->scratch->materialise($source);
         $temporaryPath = tempnam(sys_get_temp_dir(), 'cutout-').'.png';
 
         $outcome = $this->cutoutService->removeBackground(
-            $source->getPath(),
+            $sourcePath,
             $temporaryPath,
             $subject,
             $userId,
         );
 
+        $this->scratch->release($sourcePath);
+
         if (! $outcome->status->producedOutput()) {
-            $this->discard($temporaryPath);
+            $this->scratch->release($temporaryPath);
 
             return $outcome;
         }
@@ -43,15 +47,5 @@ class CutoutPipeline
             ->toMediaCollection($destinationCollection);
 
         return $outcome;
-    }
-
-    /**
-     * Remove a temporary file left behind by a driver that produced nothing usable.
-     */
-    private function discard(string $path): void
-    {
-        if (is_file($path)) {
-            unlink($path);
-        }
     }
 }

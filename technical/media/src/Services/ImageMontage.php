@@ -33,8 +33,16 @@ class ImageMontage
         imagefilledrectangle($canvas, 0, 0, imagesx($canvas), imagesy($canvas), $transparent);
         imagealphablending($canvas, true);
 
+        $drawn = 0;
+
         foreach ($sourcePaths as $cellIndex => $sourcePath) {
-            $this->drawCell($canvas, $sourcePath, $cellIndex, $columns, $cellSize);
+            $drawn += $this->drawCell($canvas, $sourcePath, $cellIndex, $columns, $cellSize) ? 1 : 0;
+        }
+
+        if ($drawn === 0) {
+            imagedestroy($canvas);
+
+            return false;
         }
 
         $written = imagepng($canvas, $destinationPath);
@@ -44,14 +52,18 @@ class ImageMontage
     }
 
     /**
-     * Draw one image, scaled to fit its cell without distortion.
+     * Draw one image, scaled to fit its cell without distortion, and say whether it landed.
      */
-    private function drawCell(\GdImage $canvas, string $sourcePath, int $cellIndex, int $columns, int $cellSize): void
+    private function drawCell(\GdImage $canvas, string $sourcePath, int $cellIndex, int $columns, int $cellSize): bool
     {
+        if (! is_file($sourcePath)) {
+            return false;
+        }
+
         $source = @imagecreatefromstring((string) file_get_contents($sourcePath));
 
         if ($source === false) {
-            return;
+            return false;
         }
 
         $sourceWidth = imagesx($source);
@@ -78,5 +90,7 @@ class ImageMontage
         );
 
         imagedestroy($source);
+
+        return true;
     }
 }
